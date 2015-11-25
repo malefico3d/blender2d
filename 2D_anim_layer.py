@@ -30,24 +30,26 @@ from bpy.props import (StringProperty,
 
 from bpy_extras.object_utils import AddObjectHelper, object_data_add
 from bpy_extras.image_utils import load_image
+from bpy_extras.io_utils import ImportHelper # needed to show File Select Window
 
 
-
-class IMPORT_OT_anim_layer(Operator, AddObjectHelper):
+class IMPORT_OT_anim_layer(Operator, ImportHelper, AddObjectHelper):
     """Creates a plane and an image sequence to use is 2D animation"""
     bl_idname = "animation.create_anim_layer"
-    bl_label = "Creates a 2D Animation Layer"
+    bl_label = "Select a folder for saving images"
     bl_options = {'REGISTER', 'UNDO'}
 
-   #----------------------------------------------------------------------------
-   # IMPORTANT: EDIT THIS DEFAULT FILE PATH TO AVOID CRASH ON STARTUP
-   #
-   # The path must EXIST, it's not created nor checked by the script right now.
-   # This is where all image sequence files will be created.
-   # ---------------------------------------------------------------------------
 
-    filepath = StringProperty(name="Image Folder", default="/home/alumno/script", maxlen = 1024)
-    # ********************************************************************   
+    filename_ext = ".txt"
+# Magic thing that made all files dissapear in File Select Window
+    filter_glob = StringProperty(
+            default=".",
+            options={'HIDDEN'},
+            )
+    use_filter_folder = True
+
+    filepath = StringProperty(name="Image Folder", default=".", maxlen = 1024)
+    
 
     start_frame = IntProperty(name="Start", min=1, soft_min=1, default=1, description="Start frame of animation layer")
     end_frame = IntProperty(name="End", min=1, soft_min=1, default=2, description="End frame of animation layer")
@@ -63,12 +65,11 @@ class IMPORT_OT_anim_layer(Operator, AddObjectHelper):
 
     # --------
     # Options.
-
+    # Still not used, intended for many layers
     align_offset = FloatProperty(name="Offset", min=0, soft_min=0, default=0.1, description="Space between Planes")
     
 
     def draw(self, context):
-        engine = context.scene.render.engine
         layout = self.layout
 
         box = layout.box()
@@ -93,10 +94,10 @@ class IMPORT_OT_anim_layer(Operator, AddObjectHelper):
 
 
 
-    #def invoke(self, context, event):
+    def invoke(self, context, event):
     #    self.update_extensions(context)
-    #    context.window_manager.fileselect_add(self)
-    #    return {'RUNNING_MODAL'}
+        context.window_manager.fileselect_add(self)
+        return {'RUNNING_MODAL'}
 
     def execute(self, context):
         if not bpy.data.is_saved:
@@ -116,7 +117,6 @@ class IMPORT_OT_anim_layer(Operator, AddObjectHelper):
 
 # Principal
     def create_image_plane(self, context):
-        engine = context.scene.render.engine
         y = self.frame_height
         x = self.frame_width
         bpy.ops.mesh.primitive_plane_add('INVOKE_REGION_WIN')
@@ -148,10 +148,12 @@ class IMPORT_OT_anim_layer(Operator, AddObjectHelper):
         start = self.start_frame
         end = self.end_frame
         layername= self.layer_name
-        filepath= self.filepath
+        userpath= os.path.dirname(self.filepath)
+        print("user path es: ", userpath)
         size = self.frame_width, self.frame_height
+        
         # Creates image datablock with blank image data
-        image = bpy.ops.image.new(name= layername, width=size[0], height=size[1], color=(0.0, 0.0, 0.0, 0.0), alpha=True, generated_type='BLANK', float=False, gen_context='NONE', use_stereo_3d=False)
+        image = bpy.ops.image.new(name= layername, width=size[0], height=size[1], color=(0.0, 0.0, 0.0, 0.0), alpha=True, generated_type='BLANK', float=False, gen_context='NONE')
         # Reads data from created datablock
         image_data = bpy.data.images[layername]
         ob_layer = context.scene.objects.active
@@ -160,7 +162,7 @@ class IMPORT_OT_anim_layer(Operator, AddObjectHelper):
         # Creates PNG files for all frames in sequence
         for i in range (start, end):
             name = layername + "-" + str(i).zfill(5) + ".PNG"
-            path = os.path.join(filepath,name)
+            path = os.path.join(userpath,name)
 
             image_data.filepath_raw = path
             image_data.file_format = 'PNG'
@@ -181,7 +183,9 @@ class IMPORT_OT_anim_layer(Operator, AddObjectHelper):
 
         image_texture = bpy.data.textures.new(self.layer_name, type= 'IMAGE')
         image_texture.image = image_data
-        
+
+# I NEED TO IMPLEMENT THESE BUT STILL I COULDN'T MAKE IT TO WORK
+#----------------------------------------------------------------        
 #        bpy.data.textures[image_data.name].use_autorefresh = True
 #        bpy.data.textures[image_data.name].frame_start = start
         
@@ -208,13 +212,11 @@ def create_anim_layer_button(self, context):
 
 def register():
     bpy.utils.register_module(__name__)
-    #bpy.types.INFO_MT_file_import.append(create_anim_layer_button)
     bpy.types.INFO_MT_mesh_add.append(create_anim_layer_button)
 
 
 def unregister():
     bpy.utils.unregister_module(__name__)
-    #bpy.types.INFO_MT_file_import.remove(create_anim_layer_button)
     bpy.types.INFO_MT_mesh_add.remove(create_anim_layer_button)
 
 
