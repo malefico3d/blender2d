@@ -39,13 +39,15 @@
 <p>This project objective is to provide several tools for use in traditional 2D animation.</p>
 
 <h2>
-<a id="2d-animation-layer" class="anchor" href="#2d-animation-layer" aria-hidden="true"><span class="octicon octicon-link"></span></a>"2D Animation Layer"</h2>
+<a id="2d-animation-layer" class="anchor" href="#2d-animation-layer" aria-hidden="true"><span class="octicon octicon-link"></span></a>"Lightbox Animation Layer"</h2>
 
 <p>This add-on creates a transparent "layer" ready to draw. Intended use is to create cleanups or final images from pencil or grease-pencil tests.
 Once you have finished your tests, you can either scan your pages, or render your grease-pencil animation, load them as Background Image in 3D View, and then run this add-on.</p>
 
 <img src="images/example.png" alt="Add-on in action" style="width:640px;height:480px;">
 <p>First you need to set width and height resolution as well as start and end frame of sequence. It will create a plane with proper material and textures where you can draw freely, as well as the required BLANK image sequence files (located in the provided path). </p>
+
+<p>If there is a Background Image set in 3D viewport you can choose to use its width and height and sequence parameters.</p>
 
 <p>Once set, you can enter Texture Paint mode to start painting your frames. Surf the timeline to paint along the animation. From Image Editor you can save your work clicking on Image &gt; Save Sequence menu item.</p>
 
@@ -56,17 +58,16 @@ Once you have finished your tests, you can either scan your pages, or render you
 
 <h2><a id="todo" class="anchor" href="#todo" aria-hidden="true"><span class="octicon octicon-link"></span></a>To do</h2>
 <ul>
-<li>Copy image height and width if Background Image is set in 3D View</li>
-<li>Automatically set "Autorefresh" options in texture properties and Image Editor</li>
-<li>Editing tools for frames timeline. Copy/Cut/Paste images.</li>    
+<li>Create each lightbox layer in separate 3D layers.</li>
+<li>Set viewport draw mode as "Material" automatically</li>
 <li>Onion skinning</li>
 </ul>
 
 <h2><a id="known-problems" class="anchor" href="#known-problems" aria-hidden="true"><span class="octicon octicon-link"></span></a>Known problems:</h2>
 <ul>
-<li>At start you need to manually set "Autorefresh" option on in both 3D view and Image Editor windows. This should be automatic in future versions.</li>
-<li>Sometimes (if there is no Image Editor window opened) you need to set "start frame" of sequence manually at "1".</li>
+<li>For every NEW Image Editor window you need to manually set "Autorefresh" option and start frame.</li>
 <li>If you create a sequence and then rename it, the original files will not be deleted nor replaced.</li>
+<li>If you go off-limits in the timeline, texture images will not be found as they were not generated, showing a pink material.</li>
 </ul>
       </section>
     </div>
