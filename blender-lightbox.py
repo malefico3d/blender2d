@@ -245,7 +245,7 @@ class VIEW3D_OT_lightbox_layer(Operator, AddObjectHelper):
                 self.frame_height = image_data.size[1]
                 if image_data.source == 'SEQUENCE':
                     self.frame_start = bg_images[0].image_user.frame_start
-                    self.frame_end = bg_images[0].image_user.frame_end
+                    self.frame_end = bg_images[0].image_user.frame_start + bg_images[0].image_user.frame_duration
 
         row = box.row()
         row.prop(self, "frame_width")
