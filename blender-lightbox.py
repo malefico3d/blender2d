@@ -81,9 +81,7 @@ class LB_Callback_Operator(Operator):
             image_data.save()
             print("Saving image: ", path)
         return {'FINISHED'}    
-
-
-        
+       
     def execute(self, context):
         self.create_blank_sequence()
         return {'FINISHED'}    
@@ -243,7 +241,7 @@ class VIEW3D_OT_lightbox_layer(Operator, AddObjectHelper):
                 image_data = bg_images[0].image # First background image data is used
                 self.frame_width = image_data.size[0]
                 self.frame_height = image_data.size[1]
-                if image_data.source == 'SEQUENCE':
+                if image_data.source == 'SEQUENCE' or image_data.source == 'MOVIE':
                     self.frame_start = bg_images[0].image_user.frame_start
                     self.frame_end = bg_images[0].image_user.frame_start + bg_images[0].image_user.frame_duration
 
